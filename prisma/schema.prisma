@@ -1,0 +1,47 @@
+generator client {
+  provider             = "prisma-client-js"
+  experimentalFeatures = ["connectOrCreate"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @default(uuid()) @id
+  email     String      @unique
+  name      String?
+  tag       Tag[]
+  tagWinary TagWinery[]
+  winary    Winery[]
+}
+
+model Tag {
+  id        String      @default(uuid()) @id
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  author    User        @relation(fields: [authorId], references: [id])
+  authorId  String
+  tagWinery TagWinery[]
+}
+
+model TagWinery {
+  id        String   @default(uuid()) @id
+  tagName   Tag      @relation(fields: [tagId], references: [id])
+  tagId     String
+  winery    Winery   @relation(fields: [wineryId], references: [id])
+  wineryId  String
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
+model Winery {
+  id        String      @default(uuid()) @id
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  author    User        @relation(fields: [authorId], references: [id])
+  authorId  String
+  tag       TagWinery[]
+}
